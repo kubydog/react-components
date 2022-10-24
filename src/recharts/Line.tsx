@@ -12,16 +12,33 @@ const CustomizedLabel: FunctionComponent<any> = (props: any) => {
   );
 };
 
+interface Data {
+  name: string;
+  uv: string;
+  uvDisplay?: number;
+}
+
 const LineChartExample: React.FC = () => {
-  const data = [
-    { name: "Page A", uv: 4000, uvDisplay: 40 },
-    { name: "Page B", uv: 32, uvDisplay: 32},
-    { name: "Page C", uv: 20, uvDisplay: 20 },
-    { name: "Page D", uv: 35, uvDisplay: 35 },
-    { name: "Page E", uv: 18, uvDisplay: 18 },
-    { name: "Page F", uv: 23, uvDisplay: 23 },
-    { name: "Page G", uv: 34, uvDisplay: 34 }
+  const data: Data[] = [
+    { name: "01:00", uv: 'cool'},
+    { name: "02:00", uv: 'warm'},
+    { name: "03:00", uv: 'cool'},
+    { name: "04:00", uv: 'hot'},
+    { name: "05:00", uv: 'hot'},
+    { name: "06:00", uv: 'warm'},
+    { name: "07:00", uv: 'cool'}
   ];
+
+  const renderData = data.map((record) => {
+    if (record.uv === 'cool') {
+      record.uvDisplay = 0.5;
+    } else if (record.uv === 'warm') {
+      record.uvDisplay = 1.5;
+    } else if (record.uv === 'hot') {
+      record.uvDisplay = 2.5;
+    }
+    return record;
+  })
 
   const tickHeight = 50;
 
@@ -29,29 +46,29 @@ const LineChartExample: React.FC = () => {
     console.log(`x: ${x}, y: ${y}, payload: ${payload}`)
     let value;
     if (payload.value === 0) {
-      value = 'write<= 10';
-    } else if (payload.value === 30) {
-      value = 'write>= 30';
-    } else {
-      value = `${payload.value}-${payload.value + 10}`;
+      value = 'cool';
+    } else if (payload.value === 1) {
+      value = 'warm';
+    } else if (payload.value === 2){
+      value = 'hot';
     }
     return (
       <text x={x-80} y={y - tickHeight / 4}>{value}</text>
     );
   };
 
-  const renderCustomXAxisTick = ({x, y, payload}: any) => {
-    if (payload.value === 'Page D') {
-      return (
-        <svg id="chart" width="300" height="225" x={x} y={y}>
-          <path d="M275,200 v-150" fill="yellow" stroke="blue" stroke-width="3" />
-        </svg>
-      );
-    }
-    return (
-      <text x={x-20} y={y+15}>{payload.value}</text>
-    );
-  };
+  // const renderCustomXAxisTick = ({x, y, payload}: any) => {
+  //   if (payload.value === 'Page D') {
+  //     return (
+  //       <svg id="chart" width="300" height="225" x={x} y={y}>
+  //         <path d="M275,200 v-150" fill="yellow" stroke="blue" stroke-width="3" />
+  //       </svg>
+  //     );
+  //   }
+  //   return (
+  //     <text x={x-20} y={y+15}>{payload.value}</text>
+  //   );
+  // };
 
   const customTooltip = ({payload, label, active}: any) => {
     if (active) {
@@ -68,8 +85,8 @@ const LineChartExample: React.FC = () => {
   return (
     <LineChart
         width={1000}
-        height={tickHeight * 4}
-        data={data}
+        height={tickHeight * 3}
+        data={renderData}
         margin={{
           top: 10,
           right: 30,
@@ -78,8 +95,8 @@ const LineChartExample: React.FC = () => {
         }}
       >
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" padding={{ left: 30, right: 30 }} tick={renderCustomXAxisTick} />
-        <YAxis tick={renderCustomYAxisTick} width={300}/>
+        <XAxis dataKey="name" padding={{ left: 30, right: 30 }} />
+        <YAxis width={300} domain={[0, 3]} tickCount={4} tick={renderCustomYAxisTick}/>
         <Tooltip content={customTooltip} />
         <Line
           connectNulls
