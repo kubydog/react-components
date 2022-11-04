@@ -1,0 +1,8 @@
+.table {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  gap: 20px;
+  margin: 40px 20px;
+}
+
